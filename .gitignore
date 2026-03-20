@@ -3,3 +3,4 @@ output/
 *.json
 !.env.example
 coverage.out
+compose.override.yaml
