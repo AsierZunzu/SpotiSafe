@@ -71,7 +71,7 @@ docker build -t spotisafe:latest .
 
 ### Local binary
 
-Requires Go 1.26+.
+Requires Go 1.25+.
 
 ```bash
 go build -o spotisafe ./cmd/spotisafe
@@ -81,6 +81,39 @@ To produce a smaller, fully static binary:
 
 ```bash
 CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spotisafe ./cmd/spotisafe
+```
+
+## Testing
+
+```bash
+go test ./...
+```
+
+Run with verbose output:
+
+```bash
+go test -v ./...
+```
+
+Run a specific package:
+
+```bash
+go test ./internal/spotify/...
+```
+
+### Coverage
+
+Print per-function coverage summary:
+
+```bash
+go test -coverprofile=coverage.out ./...
+go tool cover -func=coverage.out
+```
+
+Open an interactive HTML report in the browser:
+
+```bash
+go tool cover -html=coverage.out
 ```
 
 ## Linting
