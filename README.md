@@ -61,6 +61,28 @@ The OAuth token is saved to `./output/.spotify_token.json`. On re-runs, SpotiSaf
 docker compose up
 ```
 
+## Building
+
+### Docker image
+
+```bash
+docker build -t spotisafe:latest .
+```
+
+### Local binary
+
+Requires Go 1.26+.
+
+```bash
+go build -o spotisafe ./cmd/spotisafe
+```
+
+To produce a smaller, fully static binary:
+
+```bash
+CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spotisafe ./cmd/spotisafe
+```
+
 ## Run locally (without Docker)
 
 ```bash
