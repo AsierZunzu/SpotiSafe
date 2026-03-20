@@ -2,5 +2,4 @@
 output/
 *.json
 !.env.example
-go.sum
 coverage.out
