@@ -1,0 +1,16 @@
+services:
+  spotisafe:
+    build: .
+    image: spotisafe:latest
+    ports:
+      - "8888:8888"       # Only needed for first-run OAuth callback
+    volumes:
+      - ./output:/output  # Backup output + token file persistence
+    environment:
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REDIRECT_URI=http://localhost:8888/callback
+      - SPOTIFY_OUTPUT_DIR=/output
+      - SPOTIFY_TOKEN_FILE=/output/.spotify_token.json
+      - LOG_LEVEL=info
+    restart: "no"
