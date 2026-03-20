@@ -142,6 +142,8 @@ source .env
 | `SPOTIFY_CALLBACK_PORT` | `8888` | Local callback server port |
 | `SPOTIFY_OUTPUT_DIR` | `./output` | Where to write backup files |
 | `SPOTIFY_TOKEN_FILE` | `./output/.spotify_token.json` | Token persistence path |
+| `SPOTIFY_SCHEDULE` | *(unset)* | Cron expression for recurring backups (e.g. `0 2 * * *`). Unset = run once and exit |
+| `SPOTIFY_SKIP_INITIAL_RUN` | `false` | Set to `true` to skip the immediate run at startup when a schedule is configured |
 | `LOG_LEVEL` | `info` | Log level: debug, info, warn, error |
 
 ## Output structure

@@ -36,6 +36,41 @@ func TestLoad_Defaults(t *testing.T) {
 	}
 }
 
+func TestLoad_ValidSchedule(t *testing.T) {
+	t.Setenv("SPOTIFY_CLIENT_ID", "test-id")
+	t.Setenv("SPOTIFY_SCHEDULE", "0 2 * * *")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cfg.Schedule != "0 2 * * *" {
+		t.Errorf("Schedule = %q, want '0 2 * * *'", cfg.Schedule)
+	}
+}
+
+func TestLoad_InvalidSchedule(t *testing.T) {
+	t.Setenv("SPOTIFY_CLIENT_ID", "test-id")
+	t.Setenv("SPOTIFY_SCHEDULE", "not-a-cron")
+
+	if _, err := Load(); err == nil {
+		t.Fatal("expected error for invalid cron expression")
+	}
+}
+
+func TestLoad_SkipInitialRun(t *testing.T) {
+	t.Setenv("SPOTIFY_CLIENT_ID", "test-id")
+	t.Setenv("SPOTIFY_SKIP_INITIAL_RUN", "true")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !cfg.SkipInitialRun {
+		t.Error("SkipInitialRun should be true")
+	}
+}
+
 func TestLoad_CustomValues(t *testing.T) {
 	t.Setenv("SPOTIFY_CLIENT_ID", "my-client")
 	t.Setenv("SPOTIFY_CLIENT_SECRET", "my-secret")

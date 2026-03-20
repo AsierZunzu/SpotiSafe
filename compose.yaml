@@ -12,5 +12,7 @@ services:
       - SPOTIFY_REDIRECT_URI=http://localhost:8888/callback
       - SPOTIFY_OUTPUT_DIR=/output
       - SPOTIFY_TOKEN_FILE=/output/.spotify_token.json
+      - SPOTIFY_SCHEDULE=0 2 * * *
+      - SPOTIFY_SKIP_INITIAL_RUN=false
       - LOG_LEVEL=info
-    restart: "no"
+    restart: unless-stopped

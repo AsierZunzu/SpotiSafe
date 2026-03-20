@@ -4,6 +4,10 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/robfig/cron/v3"
 
 	"github.com/yourusername/spotisafe/internal/auth"
 	"github.com/yourusername/spotisafe/internal/backup"
@@ -25,7 +29,8 @@ func run() int {
 
 	setupLogger(cfg.LogLevel)
 
-	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
 	httpClient, err := auth.GetClient(ctx, cfg.ClientID, cfg.RedirectURI, cfg.CallbackPort, cfg.TokenFile)
 	if err != nil {
@@ -42,7 +47,34 @@ func run() int {
 	}
 	slog.Info("authenticated", "user", profile.DisplayName, "id", profile.ID)
 
-	w, err := writer.New(cfg.OutputDir, profile.ID)
+	// No schedule: run once and exit.
+	if cfg.Schedule == "" {
+		return runBackup(ctx, cfg, spotifyClient, profile.ID)
+	}
+
+	slog.Info("running on schedule", "cron", cfg.Schedule)
+
+	c := cron.New()
+	if _, err := c.AddFunc(cfg.Schedule, func() {
+		runBackup(ctx, cfg, spotifyClient, profile.ID)
+	}); err != nil {
+		slog.Error("invalid schedule", "err", err)
+		return 1
+	}
+	c.Start()
+	defer c.Stop()
+
+	if !cfg.SkipInitialRun {
+		runBackup(ctx, cfg, spotifyClient, profile.ID)
+	}
+
+	<-ctx.Done()
+	slog.Info("shutting down")
+	return 0
+}
+
+func runBackup(ctx context.Context, cfg *config.Config, spotifyClient *spotify.Client, userID string) int {
+	w, err := writer.New(cfg.OutputDir, userID)
 	if err != nil {
 		slog.Error("failed to create output directory", "err", err)
 		return 1
