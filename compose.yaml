@@ -7,6 +7,8 @@ services:
     volumes:
       - ./output:/output  # Backup output + token file persistence
     environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
       - SPOTIFY_PUBLIC_URL=${SPOTIFY_PUBLIC_URL}

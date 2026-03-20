@@ -17,12 +17,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     ./cmd/spotisafe
 
 # Stage 2: Minimal runtime image
-FROM scratch
+FROM alpine:3.21
 
-# TLS certificates (required for HTTPS to Spotify API)
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+RUN apk add --no-cache su-exec ca-certificates
 
-# Binary
 COPY --from=builder /spotisafe /spotisafe
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
-ENTRYPOINT ["/spotisafe"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/spotisafe"]
