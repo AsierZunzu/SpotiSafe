@@ -9,15 +9,15 @@ import (
 
 // Config holds all runtime configuration loaded from environment variables.
 type Config struct {
-	ClientID        string
-	ClientSecret    string
-	RedirectURI     string
-	CallbackPort    string
-	OutputDir       string
-	TokenFile       string
-	LogLevel        string
-	Schedule        string // cron expression; empty means run once and exit
-	SkipInitialRun  bool   // when true, skip the immediate run at startup
+	ClientID       string
+	ClientSecret   string
+	RedirectURI    string
+	CallbackPort   string
+	OutputDir      string
+	TokenFile      string
+	LogLevel       string
+	Schedule       string // cron expression; empty means run once and exit
+	SkipInitialRun bool   // when true, skip the immediate run at startup
 }
 
 // Load reads configuration from environment variables, applies defaults, and validates.

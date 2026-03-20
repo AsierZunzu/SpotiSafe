@@ -129,8 +129,8 @@ func TestGetFollowedArtists_Pagination(t *testing.T) {
 		if call == 1 {
 			_ = json.NewEncoder(w).Encode(FollowedArtistsResponse{
 				Artists: CursorPage[Artist]{
-					Items:   []Artist{{ID: "a1"}},
-					Next:    "non-empty",
+					Items: []Artist{{ID: "a1"}},
+					Next:  "non-empty",
 					Cursors: struct {
 						After  string `json:"after"`
 						Before string `json:"before"`

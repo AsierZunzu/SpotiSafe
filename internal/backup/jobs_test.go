@@ -153,8 +153,8 @@ func TestPlaylistsJob_Success(t *testing.T) {
 	var call int
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		call++
-		switch {
-		case r.URL.Path == "/v1/me/playlists":
+		switch r.URL.Path {
+		case "/v1/me/playlists":
 			_ = json.NewEncoder(w).Encode(spotify.OffsetPage[spotify.PlaylistSummary]{
 				Items: []spotify.PlaylistSummary{{ID: "pl1", Name: "My Playlist"}},
 			})
