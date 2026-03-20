@@ -1,7 +1,7 @@
 services:
   spotisafe:
-    build: .
-    image: spotisafe:latest
+    image: ghcr.io/yourusername/spotisafe:latest
+#    build: .
     ports:
       - "8888:8888"       # Only needed for first-run OAuth callback
     volumes:
