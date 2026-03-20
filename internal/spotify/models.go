@@ -1,5 +1,24 @@
 package spotify
 
+import "encoding/json"
+
+// flexString unmarshals a JSON string as a string, and any other JSON type
+// (number, null, bool) as an empty string. This works around Spotify API
+// inconsistencies where fields like "previous" are sometimes 0 instead of null.
+type flexString string
+
+func (f *flexString) UnmarshalJSON(b []byte) error {
+	if len(b) > 0 && b[0] == '"' {
+		var s string
+		if err := json.Unmarshal(b, &s); err != nil {
+			return err
+		}
+		*f = flexString(s)
+	}
+	// number, null, bool — treat as empty
+	return nil
+}
+
 // UserProfile represents the authenticated user's Spotify profile.
 type UserProfile struct {
 	ID          string `json:"id"`
@@ -192,12 +211,12 @@ type SavedAudiobook struct {
 
 // OffsetPage is a generic Spotify offset-paginated response.
 type OffsetPage[T any] struct {
-	Items    []T    `json:"items"`
-	Total    int    `json:"total"`
-	Limit    int    `json:"limit"`
-	Offset   int    `json:"offset"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
+	Items    []T        `json:"items"`
+	Total    int        `json:"total"`
+	Limit    int        `json:"limit"`
+	Offset   int        `json:"offset"`
+	Next     flexString `json:"next"`
+	Previous flexString `json:"previous"`
 }
 
 // CursorPage is a generic Spotify cursor-paginated response.
