@@ -1,63 +1,66 @@
 package spotify
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // GetProfile returns the authenticated user's Spotify profile.
-func (c *Client) GetProfile() (*UserProfile, error) {
+func (c *Client) GetProfile(ctx context.Context) (*UserProfile, error) {
 	var profile UserProfile
-	if err := c.get(baseURL+"/me", &profile); err != nil {
+	if err := c.get(ctx, baseURL+"/me", &profile); err != nil {
 		return nil, err
 	}
 	return &profile, nil
 }
 
 // GetSavedTracks returns all tracks saved in the user's library.
-func (c *Client) GetSavedTracks() ([]SavedTrack, error) {
-	return FetchAllOffset[SavedTrack](c, baseURL+"/me/tracks?", 50)
+func (c *Client) GetSavedTracks(ctx context.Context) ([]SavedTrack, error) {
+	return FetchAllOffset[SavedTrack](ctx, c, baseURL+"/me/tracks?", 50)
 }
 
 // GetSavedAlbums returns all albums saved in the user's library.
-func (c *Client) GetSavedAlbums() ([]SavedAlbum, error) {
-	return FetchAllOffset[SavedAlbum](c, baseURL+"/me/albums?", 50)
+func (c *Client) GetSavedAlbums(ctx context.Context) ([]SavedAlbum, error) {
+	return FetchAllOffset[SavedAlbum](ctx, c, baseURL+"/me/albums?", 50)
 }
 
 // GetSavedEpisodes returns all podcast episodes saved in the user's library.
-func (c *Client) GetSavedEpisodes() ([]SavedEpisode, error) {
-	return FetchAllOffset[SavedEpisode](c, baseURL+"/me/episodes?", 50)
+func (c *Client) GetSavedEpisodes(ctx context.Context) ([]SavedEpisode, error) {
+	return FetchAllOffset[SavedEpisode](ctx, c, baseURL+"/me/episodes?", 50)
 }
 
 // GetSavedShows returns all podcast shows saved in the user's library.
-func (c *Client) GetSavedShows() ([]SavedShow, error) {
-	return FetchAllOffset[SavedShow](c, baseURL+"/me/shows?", 50)
+func (c *Client) GetSavedShows(ctx context.Context) ([]SavedShow, error) {
+	return FetchAllOffset[SavedShow](ctx, c, baseURL+"/me/shows?", 50)
 }
 
 // GetPlaylists returns all playlists in the user's library (own + followed).
-func (c *Client) GetPlaylists() ([]PlaylistSummary, error) {
-	return FetchAllOffset[PlaylistSummary](c, baseURL+"/me/playlists?", 50)
+func (c *Client) GetPlaylists(ctx context.Context) ([]PlaylistSummary, error) {
+	return FetchAllOffset[PlaylistSummary](ctx, c, baseURL+"/me/playlists?", 50)
 }
 
 // GetPlaylistTracks returns all tracks in a given playlist.
-func (c *Client) GetPlaylistTracks(playlistID string) ([]PlaylistTrack, error) {
+func (c *Client) GetPlaylistTracks(ctx context.Context, playlistID string) ([]PlaylistTrack, error) {
 	urlBase := fmt.Sprintf("%s/playlists/%s/tracks?", baseURL, playlistID)
-	return FetchAllOffset[PlaylistTrack](c, urlBase, 50)
+	return FetchAllOffset[PlaylistTrack](ctx, c, urlBase, 50)
 }
 
 // GetTopArtists returns the user's top artists for the given time range.
 // Valid ranges: "short_term", "medium_term", "long_term".
-func (c *Client) GetTopArtists(timeRange string) ([]TopArtist, error) {
+func (c *Client) GetTopArtists(ctx context.Context, timeRange string) ([]TopArtist, error) {
 	urlBase := fmt.Sprintf("%s/me/top/artists?time_range=%s&", baseURL, timeRange)
-	return FetchAllOffset[TopArtist](c, urlBase, 50)
+	return FetchAllOffset[TopArtist](ctx, c, urlBase, 50)
 }
 
 // GetTopTracks returns the user's top tracks for the given time range.
 // Valid ranges: "short_term", "medium_term", "long_term".
-func (c *Client) GetTopTracks(timeRange string) ([]TopTrack, error) {
+func (c *Client) GetTopTracks(ctx context.Context, timeRange string) ([]TopTrack, error) {
 	urlBase := fmt.Sprintf("%s/me/top/tracks?time_range=%s&", baseURL, timeRange)
-	return FetchAllOffset[TopTrack](c, urlBase, 50)
+	return FetchAllOffset[TopTrack](ctx, c, urlBase, 50)
 }
 
 // GetFollowedArtists returns all artists the user follows using cursor pagination.
-func (c *Client) GetFollowedArtists() ([]Artist, error) {
+func (c *Client) GetFollowedArtists(ctx context.Context) ([]Artist, error) {
 	var all []Artist
 	after := ""
 
@@ -68,7 +71,7 @@ func (c *Client) GetFollowedArtists() ([]Artist, error) {
 		}
 
 		var resp FollowedArtistsResponse
-		if err := c.get(url, &resp); err != nil {
+		if err := c.get(ctx, url, &resp); err != nil {
 			return all, err
 		}
 
@@ -88,7 +91,7 @@ func (c *Client) GetFollowedArtists() ([]Artist, error) {
 }
 
 // GetRecentlyPlayed returns the user's recently played tracks using cursor pagination.
-func (c *Client) GetRecentlyPlayed() ([]RecentlyPlayedItem, error) {
+func (c *Client) GetRecentlyPlayed(ctx context.Context) ([]RecentlyPlayedItem, error) {
 	var all []RecentlyPlayedItem
 	after := ""
 
@@ -99,7 +102,7 @@ func (c *Client) GetRecentlyPlayed() ([]RecentlyPlayedItem, error) {
 		}
 
 		var page CursorPage[RecentlyPlayedItem]
-		if err := c.get(url, &page); err != nil {
+		if err := c.get(ctx, url, &page); err != nil {
 			return all, err
 		}
 
@@ -118,6 +121,6 @@ func (c *Client) GetRecentlyPlayed() ([]RecentlyPlayedItem, error) {
 }
 
 // GetAudiobooks returns all audiobooks saved in the user's library.
-func (c *Client) GetAudiobooks() ([]SavedAudiobook, error) {
-	return FetchAllOffset[SavedAudiobook](c, baseURL+"/me/audiobooks?", 50)
+func (c *Client) GetAudiobooks(ctx context.Context) ([]SavedAudiobook, error) {
+	return FetchAllOffset[SavedAudiobook](ctx, c, baseURL+"/me/audiobooks?", 50)
 }

@@ -1,6 +1,7 @@
 package spotify
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -24,25 +25,30 @@ func New(httpClient *http.Client) *Client {
 
 // get performs a GET request to the Spotify API and decodes the JSON response.
 // It handles 429 (rate limit) and 5xx (server error) retries automatically.
-func (c *Client) get(url string, out any) error {
+func (c *Client) get(ctx context.Context, url string, out any) error {
 	const maxRetries = 3
 
 	for attempt := 0; attempt <= maxRetries; attempt++ {
-		resp, err := c.http.Get(url)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return fmt.Errorf("create request %s: %w", url, err)
+		}
+		resp, err := c.http.Do(req)
 		if err != nil {
 			return fmt.Errorf("http get %s: %w", url, err)
 		}
 
 		switch {
 		case resp.StatusCode == http.StatusOK:
-			defer resp.Body.Close()
-			if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
+			err = json.NewDecoder(resp.Body).Decode(out)
+			_ = resp.Body.Close()
+			if err != nil {
 				return fmt.Errorf("decode response from %s: %w", url, err)
 			}
 			return nil
 
 		case resp.StatusCode == http.StatusTooManyRequests:
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			if attempt == maxRetries {
 				return fmt.Errorf("rate limited after %d retries: %s", maxRetries, url)
 			}
@@ -51,7 +57,7 @@ func (c *Client) get(url string, out any) error {
 			time.Sleep(wait)
 
 		case resp.StatusCode >= 500:
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			if attempt == maxRetries {
 				return fmt.Errorf("server error %d after %d retries: %s", resp.StatusCode, maxRetries, url)
 			}
@@ -60,7 +66,7 @@ func (c *Client) get(url string, out any) error {
 			time.Sleep(wait)
 
 		default:
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			return fmt.Errorf("unexpected status %d: %s", resp.StatusCode, url)
 		}
 	}

@@ -35,7 +35,7 @@ func run() int {
 
 	spotifyClient := spotify.New(httpClient)
 
-	profile, err := spotifyClient.GetProfile()
+	profile, err := spotifyClient.GetProfile(ctx)
 	if err != nil {
 		slog.Error("failed to fetch user profile", "err", err)
 		return 1
@@ -65,7 +65,7 @@ func run() int {
 		},
 	}
 
-	results := orch.Run()
+	results := orch.Run(ctx)
 	return backup.PrintSummary(results)
 }
 

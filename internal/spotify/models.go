@@ -29,32 +29,32 @@ type Artist struct {
 	Followers  struct {
 		Total int `json:"total"`
 	} `json:"followers"`
-	Images     []Image  `json:"images"`
+	Images       []Image           `json:"images"`
 	ExternalURLs map[string]string `json:"external_urls"`
 }
 
 // Album is a simplified Spotify album object.
 type Album struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	AlbumType    string   `json:"album_type"`
-	ReleaseDate  string   `json:"release_date"`
-	TotalTracks  int      `json:"total_tracks"`
-	Artists      []Artist `json:"artists"`
-	Images       []Image  `json:"images"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	AlbumType    string            `json:"album_type"`
+	ReleaseDate  string            `json:"release_date"`
+	TotalTracks  int               `json:"total_tracks"`
+	Artists      []Artist          `json:"artists"`
+	Images       []Image           `json:"images"`
 	ExternalURLs map[string]string `json:"external_urls"`
 }
 
 // Track is a simplified Spotify track object.
 type Track struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	DurationMs   int      `json:"duration_ms"`
-	Explicit     bool     `json:"explicit"`
-	Popularity   int      `json:"popularity"`
-	TrackNumber  int      `json:"track_number"`
-	Artists      []Artist `json:"artists"`
-	Album        Album    `json:"album"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	DurationMs   int               `json:"duration_ms"`
+	Explicit     bool              `json:"explicit"`
+	Popularity   int               `json:"popularity"`
+	TrackNumber  int               `json:"track_number"`
+	Artists      []Artist          `json:"artists"`
+	Album        Album             `json:"album"`
 	ExternalURLs map[string]string `json:"external_urls"`
 }
 
@@ -72,13 +72,13 @@ type SavedAlbum struct {
 
 // Episode is a Spotify podcast episode object.
 type Episode struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Description  string `json:"description"`
-	DurationMs   int    `json:"duration_ms"`
-	Explicit     bool   `json:"explicit"`
-	ReleaseDate  string `json:"release_date"`
-	Show         Show   `json:"show"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	Description  string            `json:"description"`
+	DurationMs   int               `json:"duration_ms"`
+	Explicit     bool              `json:"explicit"`
+	ReleaseDate  string            `json:"release_date"`
+	Show         Show              `json:"show"`
 	ExternalURLs map[string]string `json:"external_urls"`
 }
 
@@ -90,14 +90,14 @@ type SavedEpisode struct {
 
 // Show is a Spotify podcast show object.
 type Show struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	Description  string   `json:"description"`
-	Publisher    string   `json:"publisher"`
-	Languages    []string `json:"languages"`
-	TotalEpisodes int     `json:"total_episodes"`
-	Images       []Image  `json:"images"`
-	ExternalURLs map[string]string `json:"external_urls"`
+	ID            string            `json:"id"`
+	Name          string            `json:"name"`
+	Description   string            `json:"description"`
+	Publisher     string            `json:"publisher"`
+	Languages     []string          `json:"languages"`
+	TotalEpisodes int               `json:"total_episodes"`
+	Images        []Image           `json:"images"`
+	ExternalURLs  map[string]string `json:"external_urls"`
 }
 
 // SavedShow wraps a show with the time it was saved.
@@ -108,20 +108,20 @@ type SavedShow struct {
 
 // PlaylistSummary is a simplified playlist object from the user's list.
 type PlaylistSummary struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Description  string `json:"description"`
-	Public       bool   `json:"public"`
-	Collaborative bool  `json:"collaborative"`
-	SnapshotID   string `json:"snapshot_id"`
-	Tracks       struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	Public        bool   `json:"public"`
+	Collaborative bool   `json:"collaborative"`
+	SnapshotID    string `json:"snapshot_id"`
+	Tracks        struct {
 		Total int `json:"total"`
 	} `json:"tracks"`
-	Owner        struct {
+	Owner struct {
 		ID          string `json:"id"`
 		DisplayName string `json:"display_name"`
 	} `json:"owner"`
-	Images       []Image `json:"images"`
+	Images       []Image           `json:"images"`
 	ExternalURLs map[string]string `json:"external_urls"`
 }
 
@@ -131,8 +131,8 @@ type PlaylistTrack struct {
 	AddedBy struct {
 		ID string `json:"id"`
 	} `json:"added_by"`
-	IsLocal  bool  `json:"is_local"`
-	Track    Track `json:"track"`
+	IsLocal bool  `json:"is_local"`
+	Track   Track `json:"track"`
 }
 
 // TopArtist extends Artist with ranking context.
@@ -153,39 +153,39 @@ type RecentlyPlayedItem struct {
 
 // Audiobook is a Spotify audiobook object.
 type Audiobook struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	Description  string   `json:"description"`
-	Authors      []struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Authors     []struct {
 		Name string `json:"name"`
 	} `json:"authors"`
 	Narrators []struct {
 		Name string `json:"name"`
 	} `json:"narrators"`
-	Publisher    string   `json:"publisher"`
-	Languages    []string `json:"languages"`
-	TotalChapters int     `json:"total_chapters"`
-	Images       []Image  `json:"images"`
-	ExternalURLs map[string]string `json:"external_urls"`
+	Publisher     string            `json:"publisher"`
+	Languages     []string          `json:"languages"`
+	TotalChapters int               `json:"total_chapters"`
+	Images        []Image           `json:"images"`
+	ExternalURLs  map[string]string `json:"external_urls"`
 }
 
 // SavedAudiobook wraps an audiobook with the time it was saved.
 type SavedAudiobook struct {
 	// The API returns audiobooks directly (not wrapped like tracks/albums)
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	Description  string   `json:"description"`
-	Authors      []struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Authors     []struct {
 		Name string `json:"name"`
 	} `json:"authors"`
 	Narrators []struct {
 		Name string `json:"name"`
 	} `json:"narrators"`
-	Publisher    string   `json:"publisher"`
-	Languages    []string `json:"languages"`
-	TotalChapters int     `json:"total_chapters"`
-	Images       []Image  `json:"images"`
-	ExternalURLs map[string]string `json:"external_urls"`
+	Publisher     string            `json:"publisher"`
+	Languages     []string          `json:"languages"`
+	TotalChapters int               `json:"total_chapters"`
+	Images        []Image           `json:"images"`
+	ExternalURLs  map[string]string `json:"external_urls"`
 }
 
 // --- Paginated response envelopes ---

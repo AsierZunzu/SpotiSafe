@@ -108,7 +108,7 @@ func runPKCEFlow(ctx context.Context, cfg *oauth2.Config, port string) (*oauth2.
 	return tok, nil
 }
 
-func saveToken(path string, tok *oauth2.Token) error {
+func saveToken(path string, tok *oauth2.Token) (retErr error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
 		return err
 	}
@@ -116,7 +116,11 @@ func saveToken(path string, tok *oauth2.Token) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil && retErr == nil {
+			retErr = cerr
+		}
+	}()
 	return json.NewEncoder(f).Encode(tok)
 }
 
@@ -125,7 +129,7 @@ func loadToken(path string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	var tok oauth2.Token
 	if err := json.NewDecoder(f).Decode(&tok); err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 )
@@ -18,12 +19,12 @@ type Orchestrator struct {
 }
 
 // Run executes all jobs sequentially (soft-fail per job) and returns the results.
-func (o *Orchestrator) Run() []Result {
+func (o *Orchestrator) Run(ctx context.Context) []Result {
 	results := make([]Result, 0, len(o.Jobs))
 
 	for _, job := range o.Jobs {
 		slog.Info("running job", "job", job.Name())
-		count, err := job.Run()
+		count, err := job.Run(ctx)
 		results = append(results, Result{
 			JobName: job.Name(),
 			Count:   count,

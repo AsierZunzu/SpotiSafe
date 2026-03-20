@@ -27,7 +27,7 @@ func startCallbackServer(ctx context.Context, port string) (string, string, erro
 		q := r.URL.Query()
 		errParam := q.Get("error")
 		if errParam != "" {
-			fmt.Fprintf(w, "<html><body><h2>Authorization failed: %s</h2><p>You may close this window.</p></body></html>", errParam)
+			_, _ = fmt.Fprintf(w, "<html><body><h2>Authorization failed: %s</h2><p>You may close this window.</p></body></html>", errParam)
 			resultCh <- callbackResult{err: fmt.Errorf("spotify authorization error: %s", errParam)}
 			go srv.Shutdown(context.Background()) //nolint:errcheck
 			return
@@ -36,7 +36,7 @@ func startCallbackServer(ctx context.Context, port string) (string, string, erro
 		code := q.Get("code")
 		state := q.Get("state")
 
-		fmt.Fprint(w, "<html><body><h2>Authorization successful!</h2><p>You may close this window and return to the terminal.</p></body></html>")
+		_, _ = fmt.Fprint(w, "<html><body><h2>Authorization successful!</h2><p>You may close this window and return to the terminal.</p></body></html>")
 		resultCh <- callbackResult{code: code, state: state}
 		go srv.Shutdown(context.Background()) //nolint:errcheck
 	})

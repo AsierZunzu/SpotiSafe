@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/yourusername/spotisafe/internal/spotify"
@@ -14,8 +15,8 @@ type ProfileJob struct {
 }
 
 func (j *ProfileJob) Name() string { return "profile" }
-func (j *ProfileJob) Run() (int, error) {
-	profile, err := j.Client.GetProfile()
+func (j *ProfileJob) Run(ctx context.Context) (int, error) {
+	profile, err := j.Client.GetProfile(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -29,8 +30,8 @@ type SavedTracksJob struct {
 }
 
 func (j *SavedTracksJob) Name() string { return "saved_tracks" }
-func (j *SavedTracksJob) Run() (int, error) {
-	items, err := j.Client.GetSavedTracks()
+func (j *SavedTracksJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetSavedTracks(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -44,8 +45,8 @@ type SavedAlbumsJob struct {
 }
 
 func (j *SavedAlbumsJob) Name() string { return "saved_albums" }
-func (j *SavedAlbumsJob) Run() (int, error) {
-	items, err := j.Client.GetSavedAlbums()
+func (j *SavedAlbumsJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetSavedAlbums(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -59,8 +60,8 @@ type SavedEpisodesJob struct {
 }
 
 func (j *SavedEpisodesJob) Name() string { return "saved_episodes" }
-func (j *SavedEpisodesJob) Run() (int, error) {
-	items, err := j.Client.GetSavedEpisodes()
+func (j *SavedEpisodesJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetSavedEpisodes(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -74,8 +75,8 @@ type SavedShowsJob struct {
 }
 
 func (j *SavedShowsJob) Name() string { return "saved_shows" }
-func (j *SavedShowsJob) Run() (int, error) {
-	items, err := j.Client.GetSavedShows()
+func (j *SavedShowsJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetSavedShows(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -89,8 +90,8 @@ type FollowedArtistsJob struct {
 }
 
 func (j *FollowedArtistsJob) Name() string { return "followed_artists" }
-func (j *FollowedArtistsJob) Run() (int, error) {
-	items, err := j.Client.GetFollowedArtists()
+func (j *FollowedArtistsJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetFollowedArtists(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -104,8 +105,8 @@ type PlaylistsJob struct {
 }
 
 func (j *PlaylistsJob) Name() string { return "playlists" }
-func (j *PlaylistsJob) Run() (int, error) {
-	playlists, err := j.Client.GetPlaylists()
+func (j *PlaylistsJob) Run(ctx context.Context) (int, error) {
+	playlists, err := j.Client.GetPlaylists(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -115,7 +116,7 @@ func (j *PlaylistsJob) Run() (int, error) {
 	}
 
 	for _, pl := range playlists {
-		tracks, err := j.Client.GetPlaylistTracks(pl.ID)
+		tracks, err := j.Client.GetPlaylistTracks(ctx, pl.ID)
 		if err != nil {
 			// Soft-fail individual playlists — log but continue
 			fmt.Printf("  [WARN] could not fetch tracks for playlist %q (%s): %v\n", pl.Name, pl.ID, err)
@@ -138,10 +139,10 @@ type TopArtistsJob struct {
 }
 
 func (j *TopArtistsJob) Name() string { return "top_artists" }
-func (j *TopArtistsJob) Run() (int, error) {
+func (j *TopArtistsJob) Run(ctx context.Context) (int, error) {
 	total := 0
 	for _, tr := range []string{"short_term", "medium_term", "long_term"} {
-		items, err := j.Client.GetTopArtists(tr)
+		items, err := j.Client.GetTopArtists(ctx, tr)
 		if err != nil {
 			return total, fmt.Errorf("time range %s: %w", tr, err)
 		}
@@ -161,10 +162,10 @@ type TopTracksJob struct {
 }
 
 func (j *TopTracksJob) Name() string { return "top_tracks" }
-func (j *TopTracksJob) Run() (int, error) {
+func (j *TopTracksJob) Run(ctx context.Context) (int, error) {
 	total := 0
 	for _, tr := range []string{"short_term", "medium_term", "long_term"} {
-		items, err := j.Client.GetTopTracks(tr)
+		items, err := j.Client.GetTopTracks(ctx, tr)
 		if err != nil {
 			return total, fmt.Errorf("time range %s: %w", tr, err)
 		}
@@ -184,8 +185,8 @@ type RecentlyPlayedJob struct {
 }
 
 func (j *RecentlyPlayedJob) Name() string { return "recently_played" }
-func (j *RecentlyPlayedJob) Run() (int, error) {
-	items, err := j.Client.GetRecentlyPlayed()
+func (j *RecentlyPlayedJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetRecentlyPlayed(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -199,8 +200,8 @@ type AudiobooksJob struct {
 }
 
 func (j *AudiobooksJob) Name() string { return "audiobooks" }
-func (j *AudiobooksJob) Run() (int, error) {
-	items, err := j.Client.GetAudiobooks()
+func (j *AudiobooksJob) Run(ctx context.Context) (int, error) {
+	items, err := j.Client.GetAudiobooks(ctx)
 	if err != nil {
 		return 0, err
 	}
