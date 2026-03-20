@@ -15,8 +15,7 @@ formatters:
   enable:
     - gofmt
     - goimports
-
-formatters-settings:
-  goimports:
-    local-prefixes:
-      - github.com/yourusername/spotisafe
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/AsierZunzu/SpotiSafe
