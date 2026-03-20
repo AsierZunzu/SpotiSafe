@@ -9,11 +9,11 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/yourusername/spotisafe/internal/auth"
-	"github.com/yourusername/spotisafe/internal/backup"
-	"github.com/yourusername/spotisafe/internal/config"
-	"github.com/yourusername/spotisafe/internal/spotify"
-	"github.com/yourusername/spotisafe/internal/writer"
+	"github.com/asierzunzu/spotisafe/internal/auth"
+	"github.com/asierzunzu/spotisafe/internal/backup"
+	"github.com/asierzunzu/spotisafe/internal/config"
+	"github.com/asierzunzu/spotisafe/internal/spotify"
+	"github.com/asierzunzu/spotisafe/internal/writer"
 )
 
 func main() {

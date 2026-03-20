@@ -1,4 +1,4 @@
-module github.com/yourusername/spotisafe
+module github.com/asierzunzu/spotisafe
 
 go 1.25.8
 

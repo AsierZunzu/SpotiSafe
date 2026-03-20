@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yourusername/spotisafe/internal/spotify"
-	"github.com/yourusername/spotisafe/internal/writer"
+	"github.com/asierzunzu/spotisafe/internal/spotify"
+	"github.com/asierzunzu/spotisafe/internal/writer"
 )
 
 // redirectTransport rewrites all requests to a test server.

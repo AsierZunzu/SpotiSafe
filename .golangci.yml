@@ -18,4 +18,4 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/AsierZunzu/SpotiSafe
+        - github.com/asierzunzu/spotisafe

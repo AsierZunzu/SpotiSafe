@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yourusername/spotisafe/internal/spotify"
-	"github.com/yourusername/spotisafe/internal/writer"
+	"github.com/asierzunzu/spotisafe/internal/spotify"
+	"github.com/asierzunzu/spotisafe/internal/writer"
 )
 
 // ProfileJob backs up the user's Spotify profile.
