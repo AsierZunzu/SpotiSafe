@@ -32,7 +32,7 @@ func run() int {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	httpClient, err := auth.GetClient(ctx, cfg.ClientID, cfg.RedirectURI, cfg.CallbackPort, cfg.TokenFile)
+	httpClient, err := auth.GetClient(ctx, cfg.ClientID, cfg.CallbackPort, cfg.PublicURL, cfg.TokenFile)
 	if err != nil {
 		slog.Error("authentication failed", "err", err)
 		return 1

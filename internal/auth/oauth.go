@@ -29,7 +29,8 @@ var scopes = []string{
 
 // GetClient returns an authenticated HTTP client. It loads a saved token if
 // available (auto-refreshing if expired), otherwise runs the PKCE browser flow.
-func GetClient(ctx context.Context, clientID, redirectURI, callbackPort, tokenFile string) (*http.Client, error) {
+func GetClient(ctx context.Context, clientID, callbackPort, publicURL, tokenFile string) (*http.Client, error) {
+	redirectURI := publicURL + "/callback"
 	oauthCfg := &oauth2.Config{
 		ClientID:    clientID,
 		RedirectURL: redirectURI,
@@ -44,7 +45,7 @@ func GetClient(ctx context.Context, clientID, redirectURI, callbackPort, tokenFi
 	}
 
 	// Run PKCE flow
-	tok, err := runPKCEFlow(ctx, oauthCfg, callbackPort)
+	tok, err := runPKCEFlow(ctx, oauthCfg, callbackPort, publicURL, redirectURI)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func GetClient(ctx context.Context, clientID, redirectURI, callbackPort, tokenFi
 	return oauthCfg.Client(ctx, tok), nil
 }
 
-func runPKCEFlow(ctx context.Context, cfg *oauth2.Config, port string) (*oauth2.Token, error) {
+func runPKCEFlow(ctx context.Context, cfg *oauth2.Config, port, publicURL, redirectURI string) (*oauth2.Token, error) {
 	verifier, err := generateVerifier()
 	if err != nil {
 		return nil, fmt.Errorf("generate verifier: %w", err)
@@ -73,22 +74,13 @@ func runPKCEFlow(ctx context.Context, cfg *oauth2.Config, port string) (*oauth2.
 		oauth2.SetAuthURLParam("code_challenge", challenge),
 	)
 
-	fmt.Println()
-	fmt.Println("=============================================================")
-	fmt.Println("  SpotiSafe — Authorization Required")
-	fmt.Println("=============================================================")
-	fmt.Println("Open the following URL in your browser to authorize SpotiSafe:")
-	fmt.Println()
-	fmt.Println("  " + authURL)
-	fmt.Println()
-	fmt.Printf("Waiting for callback on port %s...\n", port)
-	fmt.Println("=============================================================")
-	fmt.Println()
+	fmt.Printf("Redirect URI (register this in your Spotify app): %s\n", redirectURI)
+	fmt.Printf("Open %s in your browser to authorize SpotiSafe.\n", publicURL)
 
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
 
-	code, returnedState, err := startCallbackServer(timeoutCtx, port)
+	code, returnedState, err := startCallbackServer(timeoutCtx, port, authURL, redirectURI)
 	if err != nil {
 		return nil, fmt.Errorf("callback: %w", err)
 	}

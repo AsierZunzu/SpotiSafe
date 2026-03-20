@@ -11,8 +11,8 @@ import (
 type Config struct {
 	ClientID       string
 	ClientSecret   string
-	RedirectURI    string
 	CallbackPort   string
+	PublicURL      string // base URL served to the user; /callback is appended for the redirect URI
 	OutputDir      string
 	TokenFile      string
 	LogLevel       string
@@ -20,13 +20,19 @@ type Config struct {
 	SkipInitialRun bool   // when true, skip the immediate run at startup
 }
 
+// RedirectURI returns the OAuth redirect URI derived from PublicURL.
+func (c *Config) RedirectURI() string {
+	return c.PublicURL + "/callback"
+}
+
 // Load reads configuration from environment variables, applies defaults, and validates.
 func Load() (*Config, error) {
+	port := getEnvDefault("SPOTIFY_CALLBACK_PORT", "8888")
 	cfg := &Config{
-		ClientID:       os.Getenv("SPOTIFY_CLIENT_ID"),
-		ClientSecret:   os.Getenv("SPOTIFY_CLIENT_SECRET"),
-		RedirectURI:    getEnvDefault("SPOTIFY_REDIRECT_URI", "http://localhost:8888/callback"),
-		CallbackPort:   getEnvDefault("SPOTIFY_CALLBACK_PORT", "8888"),
+		ClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
+		ClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
+		CallbackPort: port,
+		PublicURL:    getEnvDefault("SPOTIFY_PUBLIC_URL", "http://localhost:"+port),
 		OutputDir:      getEnvDefault("SPOTIFY_OUTPUT_DIR", "./output"),
 		TokenFile:      getEnvDefault("SPOTIFY_TOKEN_FILE", "./output/.spotify_token.json"),
 		LogLevel:       getEnvDefault("LOG_LEVEL", "info"),

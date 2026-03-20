@@ -9,7 +9,7 @@ services:
     environment:
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
-      - SPOTIFY_REDIRECT_URI=http://localhost:8888/callback
+      - SPOTIFY_PUBLIC_URL=${SPOTIFY_PUBLIC_URL}
       - SPOTIFY_OUTPUT_DIR=/output
       - SPOTIFY_TOKEN_FILE=/output/.spotify_token.json
       - SPOTIFY_SCHEDULE=0 2 * * *

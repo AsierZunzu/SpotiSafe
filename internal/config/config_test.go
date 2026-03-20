@@ -23,7 +23,7 @@ func TestLoad_Defaults(t *testing.T) {
 	}
 
 	cases := []struct{ got, want, name string }{
-		{cfg.RedirectURI, "http://localhost:8888/callback", "RedirectURI"},
+		{cfg.RedirectURI(), "http://localhost:8888/callback", "RedirectURI"},
 		{cfg.CallbackPort, "8888", "CallbackPort"},
 		{cfg.OutputDir, "./output", "OutputDir"},
 		{cfg.TokenFile, "./output/.spotify_token.json", "TokenFile"},
@@ -74,7 +74,7 @@ func TestLoad_SkipInitialRun(t *testing.T) {
 func TestLoad_CustomValues(t *testing.T) {
 	t.Setenv("SPOTIFY_CLIENT_ID", "my-client")
 	t.Setenv("SPOTIFY_CLIENT_SECRET", "my-secret")
-	t.Setenv("SPOTIFY_REDIRECT_URI", "http://localhost:9999/callback")
+	t.Setenv("SPOTIFY_PUBLIC_URL", "http://localhost:9999")
 	t.Setenv("SPOTIFY_CALLBACK_PORT", "9999")
 	t.Setenv("SPOTIFY_OUTPUT_DIR", "/tmp/backup")
 	t.Setenv("SPOTIFY_TOKEN_FILE", "/tmp/token.json")
@@ -88,7 +88,7 @@ func TestLoad_CustomValues(t *testing.T) {
 	cases := []struct{ got, want, name string }{
 		{cfg.ClientID, "my-client", "ClientID"},
 		{cfg.ClientSecret, "my-secret", "ClientSecret"},
-		{cfg.RedirectURI, "http://localhost:9999/callback", "RedirectURI"},
+		{cfg.RedirectURI(), "http://localhost:9999/callback", "RedirectURI"},
 		{cfg.CallbackPort, "9999", "CallbackPort"},
 		{cfg.OutputDir, "/tmp/backup", "OutputDir"},
 		{cfg.TokenFile, "/tmp/token.json", "TokenFile"},
