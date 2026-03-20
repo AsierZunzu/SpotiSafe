@@ -83,6 +83,14 @@ To produce a smaller, fully static binary:
 CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spotisafe ./cmd/spotisafe
 ```
 
+## Linting
+
+Requires [golangci-lint](https://golangci-lint.run/welcome/install/).
+
+```bash
+golangci-lint run
+```
+
 ## Run locally (without Docker)
 
 ```bash
