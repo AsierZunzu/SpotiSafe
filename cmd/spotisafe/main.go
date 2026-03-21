@@ -6,12 +6,14 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/robfig/cron/v3"
 
 	"github.com/asierzunzu/spotisafe/internal/auth"
 	"github.com/asierzunzu/spotisafe/internal/backup"
 	"github.com/asierzunzu/spotisafe/internal/config"
+	"github.com/asierzunzu/spotisafe/internal/retention"
 	"github.com/asierzunzu/spotisafe/internal/spotify"
 	"github.com/asierzunzu/spotisafe/internal/writer"
 )
@@ -98,7 +100,20 @@ func runBackup(ctx context.Context, cfg *config.Config, spotifyClient *spotify.C
 	}
 
 	results := orch.Run(ctx)
-	return backup.PrintSummary(results)
+	code := backup.PrintSummary(results)
+
+	policy := retention.Policy{
+		KeepLast:      cfg.RetentionKeepLast,
+		KeepLastDay:   cfg.RetentionKeepLastDay,
+		KeepLastWeek:  cfg.RetentionKeepLastWeek,
+		KeepLastMonth: cfg.RetentionKeepLastMonth,
+		KeepLastYear:  cfg.RetentionKeepLastYear,
+	}
+	if err := retention.Apply(cfg.OutputDir, policy, time.Now().UTC()); err != nil {
+		slog.Warn("retention policy failed", "err", err)
+	}
+
+	return code
 }
 
 func setupLogger(level string) {

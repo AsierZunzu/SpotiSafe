@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"strconv"
 
 	"github.com/robfig/cron/v3"
 )
@@ -18,6 +19,13 @@ type Config struct {
 	LogLevel       string
 	Schedule       string // cron expression; empty means run once and exit
 	SkipInitialRun bool   // when true, skip the immediate run at startup
+
+	// Retention policy for automatic cleanup of old backup directories.
+	RetentionKeepLast      int
+	RetentionKeepLastDay   int
+	RetentionKeepLastWeek  int
+	RetentionKeepLastMonth int
+	RetentionKeepLastYear  int
 }
 
 // RedirectURI returns the OAuth redirect URI derived from PublicURL.
@@ -38,6 +46,12 @@ func Load() (*Config, error) {
 		LogLevel:       getEnvDefault("LOG_LEVEL", "info"),
 		Schedule:       os.Getenv("SPOTIFY_SCHEDULE"),
 		SkipInitialRun: os.Getenv("SPOTIFY_SKIP_INITIAL_RUN") == "true",
+
+		RetentionKeepLast:      getEnvInt("RETENTION_KEEP_LAST", 5),
+		RetentionKeepLastDay:   getEnvInt("RETENTION_KEEP_LAST_DAY", 1),
+		RetentionKeepLastWeek:  getEnvInt("RETENTION_KEEP_LAST_WEEK", 3),
+		RetentionKeepLastMonth: getEnvInt("RETENTION_KEEP_LAST_MONTH", 8),
+		RetentionKeepLastYear:  getEnvInt("RETENTION_KEEP_LAST_YEAR", 12),
 	}
 
 	if cfg.ClientID == "" {
@@ -58,4 +72,16 @@ func getEnvDefault(key, defaultVal string) string {
 		return v
 	}
 	return defaultVal
+}
+
+func getEnvInt(key string, defaultVal int) int {
+	v := os.Getenv(key)
+	if v == "" {
+		return defaultVal
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n < 0 {
+		return defaultVal
+	}
+	return n
 }
