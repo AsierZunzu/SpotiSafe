@@ -41,7 +41,12 @@ func GetClient(ctx context.Context, clientID, callbackPort, publicURL, tokenFile
 	// Try to load existing token
 	if tok, err := loadToken(tokenFile); err == nil {
 		slog.Info("loaded existing token from file", "file", tokenFile)
-		return oauthCfg.Client(ctx, tok), nil
+		src := &persistingTokenSource{
+			base: oauthCfg.TokenSource(ctx, tok),
+			path: tokenFile,
+			last: tok,
+		}
+		return oauth2.NewClient(ctx, src), nil
 	}
 
 	// Run PKCE flow
@@ -54,7 +59,36 @@ func GetClient(ctx context.Context, clientID, callbackPort, publicURL, tokenFile
 		slog.Warn("could not save token", "err", err)
 	}
 
-	return oauthCfg.Client(ctx, tok), nil
+	src := &persistingTokenSource{
+		base: oauthCfg.TokenSource(ctx, tok),
+		path: tokenFile,
+		last: tok,
+	}
+	return oauth2.NewClient(ctx, src), nil
+}
+
+// persistingTokenSource wraps an oauth2.TokenSource and writes the token to
+// disk whenever it changes (i.e. after a refresh), so subsequent runs can
+// reuse the new access token without re-authorizing.
+type persistingTokenSource struct {
+	base oauth2.TokenSource
+	path string
+	last *oauth2.Token
+}
+
+func (s *persistingTokenSource) Token() (*oauth2.Token, error) {
+	tok, err := s.base.Token()
+	if err != nil {
+		return nil, err
+	}
+	if tok.AccessToken != s.last.AccessToken {
+		slog.Info("token refreshed, persisting to disk", "file", s.path)
+		if saveErr := saveToken(s.path, tok); saveErr != nil {
+			slog.Warn("could not persist refreshed token", "err", saveErr)
+		}
+		s.last = tok
+	}
+	return tok, nil
 }
 
 func runPKCEFlow(ctx context.Context, cfg *oauth2.Config, port, publicURL, redirectURI string) (*oauth2.Token, error) {
