@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -79,6 +80,14 @@ type persistingTokenSource struct {
 func (s *persistingTokenSource) Token() (*oauth2.Token, error) {
 	tok, err := s.base.Token()
 	if err != nil {
+		var re *oauth2.RetrieveError
+		if errors.As(err, &re) && re.ErrorCode == "invalid_grant" {
+			slog.Warn("refresh token revoked, deleting saved token", "file", s.path)
+			if rmErr := os.Remove(s.path); rmErr != nil && !os.IsNotExist(rmErr) {
+				slog.Warn("could not delete token file", "err", rmErr)
+			}
+			return nil, fmt.Errorf("refresh token revoked — delete the token file and re-authorize: %w", err)
+		}
 		return nil, err
 	}
 	if tok.AccessToken != s.last.AccessToken {
