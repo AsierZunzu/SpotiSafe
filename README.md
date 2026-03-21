@@ -1,5 +1,7 @@
 # SpotiSafe
 
+> **Personal project** — built for self-use and as a testbed for exploring different AI-assisted programming techniques and tools. Shared as-is with no guarantees of stability, support, or general-purpose usability.
+
 A Go CLI tool that backs up all your Spotify account data to local JSON files. Run it periodically to keep a snapshot of your library, playlists, listening history, and profile — for recovery or migration.
 
 ## What gets backed up
