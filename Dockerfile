@@ -17,7 +17,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     ./cmd/spotisafe
 
 # Stage 2: Minimal runtime image
-FROM alpine:3.21
+FROM alpine:3.23
 
 RUN apk add --no-cache su-exec ca-certificates
 
