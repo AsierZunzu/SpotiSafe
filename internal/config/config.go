@@ -29,10 +29,10 @@ func (c *Config) RedirectURI() string {
 func Load() (*Config, error) {
 	port := getEnvDefault("SPOTIFY_CALLBACK_PORT", "8888")
 	cfg := &Config{
-		ClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
-		ClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-		CallbackPort: port,
-		PublicURL:    getEnvDefault("SPOTIFY_PUBLIC_URL", "http://localhost:"+port),
+		ClientID:       os.Getenv("SPOTIFY_CLIENT_ID"),
+		ClientSecret:   os.Getenv("SPOTIFY_CLIENT_SECRET"),
+		CallbackPort:   port,
+		PublicURL:      getEnvDefault("SPOTIFY_PUBLIC_URL", "http://localhost:"+port),
 		OutputDir:      getEnvDefault("SPOTIFY_OUTPUT_DIR", "./output"),
 		TokenFile:      getEnvDefault("SPOTIFY_TOKEN_FILE", "./output/.spotify_token.json"),
 		LogLevel:       getEnvDefault("LOG_LEVEL", "info"),
