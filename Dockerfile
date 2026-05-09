@@ -19,7 +19,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 # Stage 2: Minimal runtime image
 FROM alpine:3.23
 
-RUN apk add --no-cache su-exec ca-certificates
+RUN apk add --no-cache su-exec ca-certificates tzdata
+
+ENV TZ=UTC
 
 COPY --from=builder /spotisafe /spotisafe
 COPY docker-entrypoint.sh /docker-entrypoint.sh
